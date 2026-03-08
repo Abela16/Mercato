@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt, { genSalt } from "bcrypt";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -37,4 +37,4 @@ userSchema.pre('save', async function (next) {
 })
 
 
-export default mongoose.model("user", userSchema)
+export default mongoose.model("User", userSchema)
