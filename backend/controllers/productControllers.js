@@ -2,7 +2,7 @@ import Product from "../models/productModel.js";
 import asyncHandler from 'express-async-handler';
 
 
-const createProduct = asyncHandler( async (req, res) => {
+export const createProduct = asyncHandler( async (req, res) => {
     const product = new Product({
         user: req.user._id,
         name: "Sample Product",
@@ -17,7 +17,7 @@ const createProduct = asyncHandler( async (req, res) => {
     res.status(201).json(createdProduct);
 })
 
-const getProducts = asyncHandler ( async (req, res) => {
+export const getProducts = asyncHandler ( async (req, res) => {
    const pageSize = 10
    const page = Number(req.query.pageNumber) || 1
 
@@ -37,4 +37,13 @@ const getProducts = asyncHandler ( async (req, res) => {
     
     res.json({ products, page, pages: Math.ceil(count / pageSize) })
 })
-export  { createProduct, getProducts};
+
+export const getProductById = asyncHandler( async (req, res) => {
+    const product = await Product.findById(req.params.id)
+
+    if(product){
+        res.json(product)
+    }else{
+        res.status(404).json({missage: "product not found"})
+    }
+})
