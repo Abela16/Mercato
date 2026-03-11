@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from './routes/productRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
 
 dotenv.config()
 
@@ -17,6 +18,8 @@ connectDB();
 
 app.use('/api/user', userRoutes)
 app.use('/api/product', productRoutes)
+app.use('/api/order', orderRoutes)
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Mercato API");
