@@ -1,37 +1,51 @@
-import Order from '../models/orderModel.js';
 import asyncHandler from 'express-async-handler';
+import Order from '../models/orderModel.js';
+import Product from '../models/productModel.js';
+import { calcPrices } from '../utils/calculatePrices.js';
 
-const createOrder = asyncHandler( async (req, res) => {
-    const {
-        orderItems,
-        shippingAddress,
-        paymentMethod,
-        itemsPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
-    } = req.body
+const addOrderItems = asyncHandler(async (req, res) => {
+  const { orderItems, shippingAddress, paymentMethod } = req.body;
 
-    if (!orderItems || orderItems.length === 0) {
-        res.status(400).json({ message: "No order items" })
+  if (orderItems && orderItems.length === 0) {
+    res.status(400);
+    throw new Error('No order items');
+  } else {
 
-    }else{
-        const order = new Order({
-            orderItems,
-            user: req.user._id,
-            shippingAddress,
-            paymentMethod,
-            itemsPrice,
-            taxPrice,
-            shippingPrice,
-            totalPrice,
-        })
-    const creatOrder = await order.save()
+    const itemsFromDB = await Product.find({
+      _id: { $in: orderItems.map((x) => x._id) },
+    });
+    
+    const dbOrderItems = orderItems.map((itemFromClient) => {
+      const matchingItemFromDB = itemsFromDB.find(
+        (itemFromDB) => itemFromDB._id.toString() === itemFromClient._id
+      );
+      return {
+        ...itemFromClient,
+        product: itemFromClient._id,
+        price: matchingItemFromDB.price,
+        _id: undefined,
+      };
+    });
 
-    res.status(201).json(creatOrder)
-    }
+    const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
+      calcPrices(dbOrderItems);
 
-})
+    const order = new Order({
+      orderItems: dbOrderItems,
+      user: req.user._id,
+      shippingAddress,
+      paymentMethod,
+      itemsPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+    });
+
+    const createdOrder = await order.save();
+
+    res.status(201).json(createdOrder);
+  }
+});
 
 const getOrderById = asyncHandler( async (req, res) => {
     const order = await Order.findById(req.params.id).populate(
@@ -96,7 +110,7 @@ const getOrders = asyncHandler (async (req, res) => {
     res.json(orders)
 })
 
-export { createOrder, 
+export { addOrderItems, 
         getOrderById,  
         updateOrderToPaid,
         updateOrderToDelivery,
