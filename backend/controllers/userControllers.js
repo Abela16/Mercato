@@ -67,3 +67,9 @@ export const getProfile = asyncHandler( async (req, res) => {
   }
 })
 
+export const getAllUser = asyncHandler( async (req, res) => {
+    const users = await User.find({})
+
+    res.json(users);
+})
+
