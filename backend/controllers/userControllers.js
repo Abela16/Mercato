@@ -73,3 +73,27 @@ export const getAllUser = asyncHandler( async (req, res) => {
     res.json(users);
 })
 
+export const updateUserProfile = asyncHandler( async (req, res) => {
+    const {name, email, password, isAdmin} = req.body 
+    const user = await User.findById(req.params.id);
+
+
+    if(user){
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.password = password || user.password;
+        user.isAdmin = isAdmin || user.isAdmin;
+
+        const editedProfile = await user.save();
+
+        res.json({
+            _id: editedProfile._id,
+            name: editedProfile.name,
+            email: editedProfile.email,
+            isAdmin: editedProfile.isAdmin,
+    });
+    }else{
+        res.status(404).json({message: "user not found"})
+    }
+})
+
