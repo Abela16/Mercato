@@ -1,10 +1,11 @@
-import HomeScreen from "./components/homeScrinn"
 
 function App() {
 
   return (
     <>
-      <HomeScreen />
+      <div>
+        hello world
+      </div>
     </>
   )
 }
