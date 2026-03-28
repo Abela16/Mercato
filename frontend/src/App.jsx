@@ -1,10 +1,10 @@
-
+import HomeScreen from "./screen/HomeScreen.jsx"
 function App() {
 
   return (
     <>
       <div>
-        hello world
+        <HomeScreen />
       </div>
     </>
   )
