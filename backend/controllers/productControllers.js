@@ -80,3 +80,10 @@ export const updateProduct = asyncHandler( async (req, res) => {
         res.status(404).json({message: "product not found"})
     }
 })
+
+export const getTopProduct = asyncHandler( async (req, res) => {
+
+    const products = await Product.find({}).sort({ rating: -1 }).limit(3);
+
+    res.json(products);
+})
