@@ -1,3 +1,4 @@
+import Navbar from '../components/Navbar.jsx'
 import { useGetProductsQuery } from '../slices/productApiSlice'
 
 function HomeScreen() {
@@ -8,10 +9,12 @@ function HomeScreen() {
 
   return (
     <div>
-      <h1>Products</h1>
+      <div>
+        <h1>Products</h1>
       {data.products.map((p) => (
         <div key={p._id}>{p.name}</div>
       ))}
+      </div>
     </div>
   )
   
